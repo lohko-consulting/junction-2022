@@ -1,0 +1,14 @@
+{
+    "latitudeRange": [
+        18,
+        21
+    ],
+    "longitudeRange": [
+        76,
+        172
+    ],
+    "userLocation": [
+        20,
+        100
+    ]
+}
