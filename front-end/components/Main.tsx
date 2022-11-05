@@ -7,6 +7,7 @@ import { verifyMessage } from "ethers/lib/utils";
 import NotOwned from "./NotOwned";
 import Owned from "./Owned";
 import ConnectWallet from "./ConnectWallet";
+import Link from "next/link";
 
 export default function Main() {
   const [verifiedAddress, setVerifiedAddress] = useState<any>();
@@ -56,7 +57,12 @@ export default function Main() {
   if (!mounted) return <h1>Loading...</h1>;
 
   return (
-    <div className="flex items-center justify-center min-h-screen flex items-center justify-center bg-binanceBg text-white">
+    <div className="relative flex py-24 items-center justify-center min-h-screen flex items-center justify-center bg-binanceBg text-white px-4">
+      
+      <div className="flex items-center text-xl py-4 text-white justify-center gap-8 absolute top-0 left-0 right-0">
+        <Link href="/"><a className="text-binanceYellow underline">Portal</a></Link>
+        <Link href="/afterparty"><a className="text-white transition-all duration-350 hover:opacity-60">Afterparty</a></Link>
+        </div>
       <div className="text-center">
         <div className="max-w-[213px] w-full mx-auto">
           <svg
@@ -102,7 +108,7 @@ export default function Main() {
             ></path>
           </svg>
         </div>
-        <h1 className="text-6xl font-bold my-2">POPD</h1>
+        <h1 className="text-4xl sm:text-6xl font-bold my-2">POPD</h1>
         <h1 className="mb-12 mt-4">
           Proof Of Personal Data leveraging zk-SNARKs and Binance Smart Chain
         </h1>

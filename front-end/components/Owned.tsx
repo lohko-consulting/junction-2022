@@ -56,7 +56,7 @@ export default function Owned() {
         SBT & user data found for address {address?.slice(0, 4)}...
         {address?.slice(address.length - 4, address.length)}
       </h2>
-      <div className="grid grid-cols-4 my-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 my-4 gap-4">
         <div className="bg-white/5 p-4 rounded-lg">
           <h2 className="text-sm text-binanceYellow">First name</h2>
           <p className="text-xl">{userData?.firstName}</p>
@@ -80,7 +80,7 @@ export default function Owned() {
       </p>
       <div className="h-px bg-binanceYellow/40 mb-4" />
       <h2 className="mb-4 font-bold">Available proofs</h2>
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid md:grid-cols-3 gap-4">
         <div
           className={`bg-white/5 text-center rounded-lg border p-4 ${
             over18Verified ? "border-green-400" : "border-transparent"

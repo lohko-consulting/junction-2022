@@ -22,7 +22,7 @@ export default function NotOwned() {
 
   return (
     <div className="border-2 border-binanceYellow bg-white/5 text-left p-4 md:p-8 max-w-screen-md mx-auto rounded-lg">
-      <h2 className="font-bold text-2xl mb-2">
+      <h2 className="font-bold sm:text-2xl mb-2">
         No SBT found for address {address?.slice(0, 4)}...
         {address?.slice(address.length - 4, address.length)}
       </h2>

@@ -4,8 +4,10 @@ import { contractAddress, abi } from "../lib/afterpartyContract";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ethers } from "ethers";
+import { useRouter } from "next/router";
 
 export default function Afterparty() {
+  const { asPath } = useRouter()
   const { address } = useAccount();
   const { data: signer } = useSigner();
 
@@ -63,7 +65,7 @@ export default function Afterparty() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-junctionBg">
         <div className="text-center">
-          <h1 className="font-bold text-white text-8xl text-center mb-6">
+          <h1 className="font-bold text-white text-xl sm:text-8xl text-center mb-6">
             JUNCTION 2022
           </h1>
           <h1 className="font-bold text-junctionOrange text-6xl text-center mb-12">
@@ -75,12 +77,16 @@ export default function Afterparty() {
   }
 
   return (
-    <div className="min-h-screen pt-44 pb-44 bg-junctionBg">
+    <div className="min-h-screen pt-24 sm:pt-44 pb-44 bg-junctionBg px-4 relative">
+      <div className="flex items-center text-xl py-4 text-white justify-center gap-8 absolute top-0 left-0 right-0">
+        <Link href="/"><a className="text-white transition-all duration-350 hover:opacity-60">Portal</a></Link>
+        <Link href="/afterparty"><a className="text-junctionOrange underline">Afterparty</a></Link>
+        </div>
       <div className="text-center">
-        <h1 className="font-bold text-white text-8xl text-center mb-6">
+        <h1 className="font-bold text-white text-4xl sm:text-8xl text-center mb-6">
           JUNCTION 2022
         </h1>
-        <h1 className="font-bold text-junctionOrange text-6xl text-center mb-12">
+        <h1 className="font-bold text-junctionOrange text-4xl sm:text-6xl text-center mb-12">
           AFTERPARTY
         </h1>
         {!userTicket && (
@@ -95,11 +101,11 @@ export default function Afterparty() {
           <div>
             <button
               onClick={mint}
-              className="bg-junctionOrange text-junctionBg px-12 py-3 font-bold tracking-wider text-xl transition-all duration-350 hover:opacity-60"
+              className="bg-junctionOrange text-junctionBg px-12 py-3 font-bold tracking-wider sm:text-xl transition-all duration-350 hover:opacity-60"
             >
               CLAIM AFTERPARTY PASS
             </button>
-            <p className="text-white max-w-[500px] mx-auto mt-12">
+            <p className="text-sm sm:text-base text-white max-w-[500px] mx-auto mt-12">
               Before claiming your pass, please verify your age using the{" "}
               <Link href="/">
                 <a className="text-junctionOrange hover:underline">
@@ -126,10 +132,9 @@ export default function Afterparty() {
               Show this ticket at the door to enter the afterparty
             </p>
             <div className="h-px bg-white/20 my-4" />
-            <p className="mb-2 text-white font-bold tracking-wide text-2xl">
+            <p className="text-white font-bold tracking-wide text-2xl">
               Ticket id #{userTicket}
             </p>
-            <p className="text-xs text-white">{address}</p>
           </div>
         )}
       </div>
