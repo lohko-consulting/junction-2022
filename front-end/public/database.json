@@ -8,16 +8,16 @@
   },
   {
     "uid": "0xdb3f8eb5228c246d382f8fd15807edd335882acf",
-    "firstName": "John",
+    "firstName": "Jane",
     "lastName": "Doe",
     "age": 26,
     "country": "Finland"
   },
   {
     "uid": "0x22b2fc87c9c4e5dc66187039c683f8138877dffa",
-    "firstName": "John",
-    "lastName": "Doe",
-    "age": 26,
-    "country": "Finland"
+    "firstName": "Doe",
+    "lastName": "John",
+    "age": 14,
+    "country": "Sweden"
   }
 ]
