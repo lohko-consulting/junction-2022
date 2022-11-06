@@ -46,7 +46,6 @@ brownie run scripts/deploy.py
 
 6. Deploy to a testnet
 
-```
 
 Run:
 ```
