@@ -6,7 +6,7 @@ import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {IAgeVerifier} from "./interfaces/IAgeVerifier.sol";
-import {ISBT} from "./interfaces/ISBT.sol";
+import {IPOPD} from "./interfaces/IPOPD.sol";
 
 error OneTicketOnly();
 error OnlyOverAge18();
@@ -20,15 +20,15 @@ contract AfterpartySBT is ERC721, Ownable {
 
     mapping(address => uint256) public walletToticketId;
 
-    ISBT public sbt;
+    IPOPD public popd;
     IAgeVerifier public ageVerifier;
 
     constructor(
-        address _SBT,
+        address _POPD,
         address _ageVerifier,
         string memory _baseTokenURI
     ) ERC721("AfterpartySBT", "APSBT") {
-        sbt = ISBT(_SBT);
+        popd = IPOPD(_POPD);
         ageVerifier = IAgeVerifier(_ageVerifier);
         baseTokenURI = _baseTokenURI;
     }
@@ -36,7 +36,7 @@ contract AfterpartySBT is ERC721, Ownable {
     function mintTicket() public returns (uint256) {
         // Validation
         if (walletToticketId[msg.sender] > 0) revert OneTicketOnly();
-        (bytes memory proof, uint256[] memory publicInputs, ) = sbt
+        (bytes memory proof, uint256[] memory publicInputs, ) = popd
             .getAgeProofByLimit(msg.sender, "Over18");
         if (!ageVerifier.verifyProof(proof, publicInputs))
             revert OnlyOverAge18();
