@@ -1,6 +1,6 @@
 # POPD - Proof Of Personal Data
 
-A Binance Smart Chain solution for securely verifying personal data with 3rd party vendors by sharing as little about the user as possible.
+A Binance Smart Chain solution for securely verifying personal data with 3rd party vendors by sharing as little about the user as possible. The point of POPD is to offer verified Binance accounts a way to prove things about their personal data without actually revealing the data itself. By leveraging zk-SNARK technology, through our portal, accounts can generate zk proofs of their personal data and then store the proofs on-chain as Souldbound Token metadata. These proofs can then be used by any BNB Smart Chain project to ensure, for example, youth safety by age verification. All of this is possible without exposing user’s personal data such as age or an address.
 
 ## Running the front-end locally:
 
