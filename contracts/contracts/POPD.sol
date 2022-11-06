@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Creator: lohko.io
 
 pragma solidity >=0.8.11;
 
@@ -6,31 +7,73 @@ import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
-error OneBadgeOnly();
-error NotBadgeOwner();
-error NotValidLimit();
-error ProofIsOverdue();
-
 contract POPD is ERC721, Ownable {
     using Strings for uint256;
 
+    /*//////////////////////////////////////////////////////////////
+                            PARAMETERS
+    //////////////////////////////////////////////////////////////*/
+
     uint256 public badgeId = 1;
+
+    uint256 public EXPIRATION_TIME = 4 weeks;
+
+    /*//////////////////////////////////////////////////////////////
+                           STRUCTS
+    //////////////////////////////////////////////////////////////*/
 
     struct AgeProof {
         bytes proof;
         uint256[] inputs;
-        uint256 deadline;
     }
+
+    struct AreaProof {
+        bytes proof;
+        uint256[] inputs;
+        uint256 expiration;
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                           AGE MAPPINGS
+    //////////////////////////////////////////////////////////////*/
 
     mapping(uint256 => mapping(string => AgeProof)) badgeIdToLimitToAgeProof;
 
-    mapping(string => bool) public validLimit;
-
     mapping(uint256 => AgeProof) public badgeIdToAgeProof;
+
+    mapping(string => bool) public validAgeLimit;
+
+    /*//////////////////////////////////////////////////////////////
+                           AREA MAPPINGS
+    //////////////////////////////////////////////////////////////*/
+
+    mapping(uint256 => mapping(string => AreaProof)) badgeIdToLimitToAreaProof;
+
+    mapping(uint256 => AgeProof) public badgeIdToAreaProof;
+
+    mapping(string => bool) public validAreaLimit;
 
     mapping(address => uint256) public walletToBadgeId;
 
+    /*//////////////////////////////////////////////////////////////
+                           ERRORS
+    //////////////////////////////////////////////////////////////*/
+
+    error OneBadgeOnly();
+    error NotBadgeOwner();
+    error NotValidAgeLimit();
+    error NotValidAreaLimit();
+    error ProofIsExpired();
+
+    /*//////////////////////////////////////////////////////////////
+                               CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor() ERC721("ProofOfPersonalData", "POPD") {}
+
+    /*//////////////////////////////////////////////////////////////
+                          MINTING LOGIC
+    //////////////////////////////////////////////////////////////*/
 
     function mintBadge() public returns (uint256) {
         // Validation
@@ -44,6 +87,10 @@ contract POPD is ERC721, Ownable {
         return badgeId;
     }
 
+    /*//////////////////////////////////////////////////////////////
+                          AGE PROOF LOGIC
+    //////////////////////////////////////////////////////////////*/
+
     function storeAgeProof(
         bytes memory _proof,
         uint256[] memory _inputs,
@@ -52,62 +99,111 @@ contract POPD is ERC721, Ownable {
         // Validation
         uint256 _badgeId = walletToBadgeId[msg.sender];
         if (_badgeId == 0) revert NotBadgeOwner();
-        if (!isValidLimit(_limit)) revert NotValidLimit();
+        if (!isValidAgeLimit(_limit)) revert NotValidAgeLimit();
         // State changes
         badgeIdToLimitToAgeProof[_badgeId][_limit].proof = _proof;
         badgeIdToLimitToAgeProof[_badgeId][_limit].inputs = _inputs;
-        badgeIdToLimitToAgeProof[_badgeId][_limit].deadline =
-            block.timestamp +
-            1 weeks;
     }
 
     function getAgeProofByLimit(address _user, string memory _limit)
         public
         view
-        returns (
-            bytes memory,
-            uint256[] memory,
-            uint256
-        )
+        returns (bytes memory, uint256[] memory)
     {
         uint256 _badgeId = walletToBadgeId[_user];
-        //if (isOverdue(_badgeId, _limit)) revert ProofIsOverdue();
-        if (!isValidLimit(_limit)) revert NotValidLimit();
+        if (!isValidAgeLimit(_limit)) revert NotValidAgeLimit();
         return (
             badgeIdToLimitToAgeProof[_badgeId][_limit].proof,
-            badgeIdToLimitToAgeProof[_badgeId][_limit].inputs,
-            badgeIdToLimitToAgeProof[_badgeId][_limit].deadline
+            badgeIdToLimitToAgeProof[_badgeId][_limit].inputs
         );
     }
 
-    function addValidLimits(string[] calldata _limits) external onlyOwner {
+    function addValidAgeLimits(string[] calldata _limits) external onlyOwner {
         for (uint256 i; i < _limits.length; ) {
-            validLimit[_limits[i]] = true;
+            validAgeLimit[_limits[i]] = true;
             unchecked {
                 ++i;
             }
         }
     }
 
-    function isValidLimit(string memory _limit) internal view returns (bool) {
-        return validLimit[_limit];
+    function isValidAgeLimit(string memory _limit)
+        internal
+        view
+        returns (bool)
+    {
+        return validAgeLimit[_limit];
     }
 
-    function isOverdue(uint256 _badgeId, string memory _limit)
+    /*//////////////////////////////////////////////////////////////
+                          AREA PROOF LOGIC
+    //////////////////////////////////////////////////////////////*/
+
+    function storeAreaProof(
+        bytes memory _proof,
+        uint256[] memory _inputs,
+        string memory _limit
+    ) public {
+        // Validation
+        uint256 _badgeId = walletToBadgeId[msg.sender];
+        if (_badgeId == 0) revert NotBadgeOwner();
+        if (!isValidAreaLimit(_limit)) revert NotValidAreaLimit();
+        // State changes
+        badgeIdToLimitToAreaProof[_badgeId][_limit].proof = _proof;
+        badgeIdToLimitToAreaProof[_badgeId][_limit].inputs = _inputs;
+        badgeIdToLimitToAreaProof[_badgeId][_limit].expiration =
+            block.timestamp +
+            EXPIRATION_TIME;
+    }
+
+    function getAreaProofByLimit(address _user, string memory _limit)
+        public
+        view
+        returns (bytes memory, uint256[] memory)
+    {
+        uint256 _badgeId = walletToBadgeId[_user];
+        if (!isValidAreaLimit(_limit)) revert NotValidAreaLimit();
+        if (isExpired(_badgeId, _limit)) revert ProofIsExpired();
+        return (
+            badgeIdToLimitToAreaProof[_badgeId][_limit].proof,
+            badgeIdToLimitToAreaProof[_badgeId][_limit].inputs
+        );
+    }
+
+    function addValidAreaLimits(string[] calldata _limits) external onlyOwner {
+        for (uint256 i; i < _limits.length; ) {
+            validAreaLimit[_limits[i]] = true;
+            unchecked {
+                ++i;
+            }
+        }
+    }
+
+    function isValidAreaLimit(string memory _limit)
+        internal
+        view
+        returns (bool)
+    {
+        return validAreaLimit[_limit];
+    }
+
+    function isExpired(uint256 _badgeId, string memory _limit)
         internal
         view
         returns (bool)
     {
         if (
             block.timestamp >
-            badgeIdToLimitToAgeProof[_badgeId][_limit].deadline
+            badgeIdToLimitToAreaProof[_badgeId][_limit].expiration
         ) {
             return true;
         }
         return false;
     }
 
-    // ======= OVERRIDES ========
+    /*//////////////////////////////////////////////////////////////
+                          OVERRIDES (LAZY WAY TO SBT)
+    //////////////////////////////////////////////////////////////*/
 
     function safeTransferFrom(
         address _from,

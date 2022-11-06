@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Creator: lohko.io
 
 pragma solidity >=0.8.11;
 
@@ -8,11 +9,12 @@ import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {IAgeVerifier} from "./interfaces/IAgeVerifier.sol";
 import {IPOPD} from "./interfaces/IPOPD.sol";
 
-error OneTicketOnly();
-error OnlyOverAge18();
-
 contract AfterpartySBT is ERC721, Ownable {
     using Strings for uint256;
+
+    /*//////////////////////////////////////////////////////////////
+                           VARIABLES/MAPPINGS
+    //////////////////////////////////////////////////////////////*/
 
     uint256 public ticketId;
 
@@ -23,6 +25,17 @@ contract AfterpartySBT is ERC721, Ownable {
     IPOPD public popd;
     IAgeVerifier public ageVerifier;
 
+    /*//////////////////////////////////////////////////////////////
+                           ERRORS
+    //////////////////////////////////////////////////////////////*/
+
+    error OneTicketOnly();
+    error OnlyOverAge18();
+
+    /*//////////////////////////////////////////////////////////////
+                           CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(
         address _POPD,
         address _ageVerifier,
@@ -32,6 +45,10 @@ contract AfterpartySBT is ERC721, Ownable {
         ageVerifier = IAgeVerifier(_ageVerifier);
         baseTokenURI = _baseTokenURI;
     }
+
+    /*//////////////////////////////////////////////////////////////
+                           MINTING LOGIC
+    //////////////////////////////////////////////////////////////*/
 
     function mintTicket() public returns (uint256) {
         // Validation
@@ -48,11 +65,17 @@ contract AfterpartySBT is ERC721, Ownable {
         return ticketId;
     }
 
+    /*//////////////////////////////////////////////////////////////
+                           GETTERS
+    //////////////////////////////////////////////////////////////*/
+
     function getTicketId(address user) external view returns (uint256) {
         return walletToticketId[user];
     }
 
-    // ======= OVERRIDES ========
+    /*//////////////////////////////////////////////////////////////
+                           OVERRIDES (LAZY WAY TO SBT)
+    //////////////////////////////////////////////////////////////*/
 
     function safeTransferFrom(
         address _from,
