@@ -14,7 +14,7 @@ This starts the development server that can be accessed at http://localhost:3000
 
 ## Running the smart contracts
 
-1. Install Brownie
+**1 - Install Brownie**
 
 ```bash
 python3 -m pip install --user pipx
@@ -29,38 +29,38 @@ Or, if that doesn't work, via pip
 pip install eth-brownie
 ```
 
-2. Clone this
+**2 - Clone this**
 
 ```bash
 git clone https://github.com/lohko-consulting/junction-2022.git
 cd contracts
 ```
 
-3. Add your PRIVATE_KEY as an environment variable
+**3 - Add your PRIVATE_KEY as an environment variable**
 
-4. Deploy everything locally
+**4 - Deploy everything locally**
 
 ```bash
 brownie run scripts/deploy.py
 ```
 
-6. Deploy to a testnet
+**6 - Deploy to a testnet**
 
 
 Run:
+
 ```
 
 brownie run scripts/deploy.py --network bsc-test
 
 ```
 
-Make sure you have some TBNB. One example faucet is this https://testnet.binance.org/faucet-smart
+Make sure you have some TBNB. One example faucet: https://testnet.binance.org/faucet-smart
 
-```
 
 ## Integrate Binance zkSBT verification to your dApp
 
-1. Download contract interfaces
+**1 - Download contract interfaces**
 
 Go to your own project's contract’s folder and make a new folder for interfaces:
 
@@ -77,7 +77,7 @@ Go to https://github.com/lohko-consulting/junction-2022/tree/main/contracts/cont
 
 **IAfterPartySBT.sol**
 
-2. Import them to your contract
+**2 - Import them to your contract**
 
 Import AgeVerifier and BinanceZKSBT interfaces to your contract by adding these lines on top of your smart contract:
 
@@ -95,7 +95,7 @@ IAgeVerifier public ageVerifier;
 IAreaVerifier public areaVerifier;
 ```
 
-3. Define AgeVerifier and BinanceZKSBT addresses
+**3 - Define AgeVerifier and BinanceZKSBT addresses**
 
 Network: BNB Smart Chain Testnet
 
@@ -115,7 +115,7 @@ ageVerifier = IAgeVerifier(0xB7970f468C8a45972663CDebF20e996ACF54948b);
 areaVerifier = IAreaVerifier(0x67340959297e61E5f58dCCa5c22b7A9EB2112f8F)
 ```
 
-4. Get and verify proofs inside your contract functions
+**4 - Get and verify proofs inside your contract functions**
 
 **Get proofs from BinanceZKSBT contract:**
 
@@ -165,4 +165,4 @@ if (!ageVerifier.verifyProof(proof, publicInputs))
             revert OnlyOverAge18();
 ```
 
-5. Enjoy safe minting, voting or anything you’d come up with!
+**5 - Enjoy safe minting, voting or anything you’d come up with!**
